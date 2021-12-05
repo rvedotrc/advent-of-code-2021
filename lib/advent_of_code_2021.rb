@@ -1,4 +1,5 @@
 require_relative './advent_of_code_2021/day1'
+require_relative './advent_of_code_2021/day2'
 
 module AdventOfCode2021
   def self.test(day_number, part_number)
