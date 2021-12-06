@@ -1,6 +1,6 @@
 module AdventOfCode2021
   class Day2
-    class Part1
+    class Part1 < Base
       def self.run(fh)
         puts new(fh.each_line).answer
       end
@@ -23,11 +23,9 @@ module AdventOfCode2021
 
         @answer = x * y
       end
-
-      attr_reader :answer
     end
 
-    class Part2
+    class Part2 < Base
       def self.run(fh)
         puts new(fh.each_line).answer
       end
@@ -51,8 +49,6 @@ module AdventOfCode2021
 
         @answer = x * y
       end
-
-      attr_reader :answer
     end
   end
 end

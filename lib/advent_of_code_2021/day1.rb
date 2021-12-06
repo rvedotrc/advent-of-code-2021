@@ -1,28 +1,20 @@
 module AdventOfCode2021
   class Day1
-    class Part1
-      def self.run(fh)
-        puts new(fh.each_line.map(&:to_i)).answer
-      end
-
-      def initialize(depths)
+    class Part1 < Base
+      def initialize(lines)
+        depths = lines.map(&:to_i)
         previous = nil
         @answer = depths.count do |depth|
           (previous && depth > previous).tap { previous = depth }
         end
       end
-
-      attr_reader :answer
     end
 
-    class Part2
+    class Part2 < Base
       WINDOW = 3
 
-      def self.run(fh)
-        puts new(fh.each_line.map(&:to_i)).answer
-      end
-
-      def initialize(depths)
+      def initialize(lines)
+        depths = lines.map(&:to_i)
         buffer = []
 
         @answer = depths.count do |depth|
@@ -32,8 +24,6 @@ module AdventOfCode2021
           end
         end
       end
-
-      attr_reader :answer
     end
   end
 end
