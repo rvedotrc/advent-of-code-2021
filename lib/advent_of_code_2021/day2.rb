@@ -1,11 +1,7 @@
 module AdventOfCode2021
   class Day2
     class Part1 < Base
-      def self.run(fh)
-        puts new(fh.each_line).answer
-      end
-
-      def initialize(lines)
+      def calculate(lines)
         x = y = 0
 
         lines.each do |line|
@@ -21,16 +17,12 @@ module AdventOfCode2021
           end
         end
 
-        @answer = x * y
+        x * y
       end
     end
 
     class Part2 < Base
-      def self.run(fh)
-        puts new(fh.each_line).answer
-      end
-
-      def initialize(lines)
+      def calculate(lines)
         x = y = aim = 0
 
         lines.each do |line|
@@ -47,7 +39,7 @@ module AdventOfCode2021
           end
         end
 
-        @answer = x * y
+        x * y
       end
     end
   end

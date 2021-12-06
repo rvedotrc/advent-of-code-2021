@@ -4,7 +4,8 @@ module AdventOfCode2021
       puts new(fh.each_line).answer
     end
 
-    def initialize(_lines)
+    def initialize(lines)
+      @answer = calculate(lines)
     end
 
     attr_reader :answer

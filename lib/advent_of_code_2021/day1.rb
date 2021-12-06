@@ -1,10 +1,10 @@
 module AdventOfCode2021
   class Day1
     class Part1 < Base
-      def initialize(lines)
+      def calculate(lines)
         depths = lines.map(&:to_i)
         previous = nil
-        @answer = depths.count do |depth|
+        depths.count do |depth|
           (previous && depth > previous).tap { previous = depth }
         end
       end
@@ -13,11 +13,11 @@ module AdventOfCode2021
     class Part2 < Base
       WINDOW = 3
 
-      def initialize(lines)
+      def calculate(lines)
         depths = lines.map(&:to_i)
         buffer = []
 
-        @answer = depths.count do |depth|
+        depths.count do |depth|
           (buffer.count == WINDOW && depth > buffer.first).tap do
             buffer.shift if buffer.count == WINDOW
             buffer.push(depth)
