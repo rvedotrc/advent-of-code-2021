@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './advent_of_code_2021/base'
 
 module AdventOfCode2021

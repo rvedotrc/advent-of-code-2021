@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative './spec_helper'
 
 describe AdventOfCode2021::Day9 do
   let (:example) {
-    <<~DATA
+    <<~'DATA'
       2199943210
       3987894921
       9856789892

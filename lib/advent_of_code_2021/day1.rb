@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AdventOfCode2021
   class Day1
     class Part1 < Base

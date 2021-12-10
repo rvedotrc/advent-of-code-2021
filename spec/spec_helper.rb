@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/advent_of_code_2021'
 
 RSpec.configure do |config|

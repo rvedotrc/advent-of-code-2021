@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative './spec_helper'
 
 describe AdventOfCode2021::Day2 do
   let(:example) {
-    <<~DATA
+    <<~'DATA'
       forward 5
       down 5
       forward 8

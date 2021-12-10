@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative './spec_helper'
 
 describe AdventOfCode2021::Day10 do
   let (:example) {
-    <<~DATA
+    <<~'DATA'
       [({(<(())[]>[[{[]{<()<>>
       [(()[<>])]({[<{<<[]>>(
       {([(<{}[<>[]}>{[]{[(<()>

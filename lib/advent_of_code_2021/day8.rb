@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AdventOfCode2021
   class Day8
     DIGITS = [
@@ -11,7 +13,7 @@ module AdventOfCode2021
       'acf', # 7
       'abcdefg', # 8
       'abcdfg', # 9
-    ]
+    ].freeze
 
     FREQUENCIES = ('a'..'g').map do |char|
       [char, DIGITS.join.count(char)]
