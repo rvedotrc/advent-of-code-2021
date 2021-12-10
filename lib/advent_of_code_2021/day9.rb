@@ -19,67 +19,60 @@ module AdventOfCode2021
     end
 
     class Part2 < Base
+      WALL = ' '
+      HOLE = '0'
+
+      attr_reader :lines
+
       def calculate(lines)
-        lines = lines.map(&:chomp).map { |s| s.tr('[0-8]', '0').tr('9', ' ') }
+        @lines = lines.map(&:chomp).map { |s| s.tr('[0-8]', HOLE).tr('9', WALL) }
 
-        puts *lines
-        puts
+        # render
 
-        code = 64
-        get_next_area_key = proc do
-          code += 1
-          [code].pack("C*")
-        end
-        used_area_keys = []
+        pools = []
 
-        # Replace horizontal sequences by rapidly-assigned area keys
-        lines = lines.map do |line|
-          line.gsub(/(0+)/) do
-            area_key = get_next_area_key.call
-            used_area_keys << area_key
-            area_key * $1.length
-          end
+        while start = find_pool
+          pools << explore_pool(start)
+          # render
         end
 
+        pools.sort.reverse.take(3).reduce(&:*)
+      end
+
+      def render
+        puts
         puts *lines
         puts
+      end
 
-        lines = lines.map(&:chars).transpose.map(&:join)
-
-        puts *lines
-        puts
-
-        used_area_keys = lines.join.tr(' ', '').chars.uniq
-
-        require 'set'
-        aliases = used_area_keys.map do |k|
-          [k, Set.new([k])]
-        end.to_h
-
-        lines.each do |line|
-          line.scan(/[^0 ]+/) do |sequence|
-            equivalents = sequence.chars.sort.uniq
-            x = equivalents.shift
-
-            equivalents.each do |y|
-              aliases[x].merge(aliases[y])
-
-              aliases[x].each do |y|
-                aliases[y] = aliases[x]
-              end
-            end
-          end
+      def find_pool
+        lines.each_with_index do |line, y|
+          x = line.index(HOLE)
+          return [x, y] if x
         end
 
-        pools = aliases.values.uniq.map do |chars|
-          key = chars.to_a.sort.join
-          count = lines.join.tr(key, '.').count('.')
-          [key, count]
-        end.to_h
+        nil
+      end
 
-        p pools
+      def explore_pool(start)
+        area = 0
+        queue = [start]
 
-        pools.entries.sort_by(&:last).reverse.take(3).map(&:last).reduce(&:*)
+        until queue.empty?
+          x, y = queue.shift
+          next if y < 0 || x < 0 || !lines[y] || !lines[y][x]
+          next if lines[y][x] == WALL
+
+          area += 1
+          lines[y][x] = WALL
+
+          queue.unshift([x + 1, y])
+          queue.unshift([x - 1, y])
+          queue.unshift([x, y + 1])
+          queue.unshift([x, y - 1])
+        end
+
+        area
       end
     end
   end
