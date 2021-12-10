@@ -28,7 +28,7 @@ module AdventOfCode2021
       end
     end
 
-    class Part2 < Part1
+    class Part2 < Base
       def calculate(lines)
         lines.map do |line|
           all, readout = line.split(' | ')

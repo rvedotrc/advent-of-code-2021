@@ -12,7 +12,7 @@ module AdventOfCode2021
       end
     end
 
-    class Part2 < Part1
+    class Part2 < Base
       def calculate(lines)
         positions = lines.first.chomp.split(',').map(&:to_i)
 
