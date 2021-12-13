@@ -3,7 +3,8 @@
 module AdventOfCode2021
   class Base
     def self.run(fh)
-      puts new(fh.each_line).answer
+      answer = new(fh.each_line).answer
+      puts answer if answer
     end
 
     def initialize(lines)

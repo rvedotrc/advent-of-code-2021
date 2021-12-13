@@ -58,7 +58,6 @@ module AdventOfCode2021
         @lines = lines.to_a
         read
         do_folds(nil)
-        p dots
 
         max_x = dots.map(&:first).max
         max_y = dots.map(&:last).max
