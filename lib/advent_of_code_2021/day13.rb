@@ -64,7 +64,7 @@ module AdventOfCode2021
         max_y = dots.map(&:last).max
 
         (0..max_y).each do |y|
-          puts((0..max_x).map { |x| dots.include?([x, y]) ? 'X' : ' ' }.join)
+          puts((0..max_x).map { |x| dots.include?([x, y]) ? 'XX' : '  ' }.join)
         end
 
         nil
