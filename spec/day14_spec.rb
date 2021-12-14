@@ -34,7 +34,7 @@ describe AdventOfCode2021::Day14 do
 
   describe AdventOfCode2021::Day14::Part2 do
     it "handles the test data" do
-      test(example, nil)
+      test(example, 2188189693529)
     end
   end
 end
