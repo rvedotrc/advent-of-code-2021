@@ -55,13 +55,11 @@ module AdventOfCode2021
 
         pair_counts.each do |pair, v|
           counts[pair.first] += v
-          counts[pair.last] += v
         end
 
-        counts[template.chars.first] += 1
         counts[template.chars.last] += 1
 
-        counts.transform_values { |n| n / 2 }
+        counts
       end
     end
 
