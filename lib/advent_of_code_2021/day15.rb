@@ -10,20 +10,25 @@ module AdventOfCode2021
         @distances = {} # missing (nil) = infinity
         @visited = Set.new
 
-        # unvisited (with a distance)
-        @unvisited_with_distance = Set.new
+        # unvisited (with a distance), sorted by distance, x, y
+        @unvisited_with_distance = []
       end
 
       def add_distance(node, distance)
         current_distance = @distances[node]
-        return if current_distance && current_distance < distance
 
-        @distances[node] = distance
+        if current_distance.nil?
+          @distances[node] = distance
+          new_index = find([distance, *node])
+          @unvisited_with_distance.insert(new_index, [distance, *node])
+        elsif distance < current_distance
+          old_index = find([current_distance, *node])
+          @unvisited_with_distance.slice(old_index)
 
-        unless @visited.include?(node)
-          @unvisited_with_distance.add(node)
-        else
-          raise # never?
+          @distances[node] = distance
+
+          new_index = find([distance, *node])
+          @unvisited_with_distance.insert(new_index, [distance, *node])
         end
       end
 
@@ -33,15 +38,58 @@ module AdventOfCode2021
 
       def mark_visited(node)
         @visited << node
-        @unvisited_with_distance.delete(node)
+
+        old_index = find([@distances[node], *node])
+        @unvisited_with_distance.slice!(old_index)
       end
 
       def nearest_unvisited
-        @unvisited_with_distance.min_by { |n| @distances[n] || raise }
+        @unvisited_with_distance.first[1..-1]
       end
 
       def distance_to(node)
         @distances[node]
+      end
+
+      # Return first position which is >= entry.
+      # 0 means entry is either first, or before-first
+      # count means entry is > last
+      # Note that if empty then 0 and count are the same thing.
+      def find(entry)
+        arr = @unvisited_with_distance
+
+        x = 0
+        y = arr.count
+
+        while x < y
+          # x points to an item;
+          # y *might* point to an item.
+          mid = ((x + y) / 2).floor # x <= mid < y
+          # mid points to an item (which might be x)
+
+          item = arr[mid]
+          cmp = if item[0] < entry[0]
+                  -1
+                elsif item[0] > entry[0]
+                  +1
+                elsif item[1] < entry[1]
+                  -1
+                elsif item[1] > entry[1]
+                  +1
+                else
+                  item[2] <=> entry[2]
+                end
+
+          if cmp > 0
+            y = mid
+          elsif cmp < 0
+            x = mid + 1
+          else
+            x = y = mid
+          end
+        end
+
+        x
       end
     end
 
@@ -63,12 +111,7 @@ module AdventOfCode2021
 
         @nodes.add_distance([0, 0], 0)
 
-        iterations = 0
         current = [0, 0]
-        puts((max_x + 1) * (max_y + 1))
-
-        t0 = Time.now
-        sort_time = 0
 
         while true
           unvisited_neighbours = unvisited_neighbours_of(*current)
@@ -78,21 +121,11 @@ module AdventOfCode2021
             nodes.add_distance(neighbour, distance)
           end
 
-          iterations += 1
-          if iterations % 1000 == 0
-            puts iterations
-          end
-
           nodes.mark_visited(current)
           break if current == [max_x, max_y]
 
-          ts0 = Time.now
           current = nodes.nearest_unvisited
-          sort_time += (Time.now - ts0)
         end
-
-        total_time = Time.now - t0
-        p [sort_time, total_time, sort_time / total_time * 100]
 
         nodes.distance_to([max_x, max_y])
       end
@@ -122,9 +155,6 @@ module AdventOfCode2021
             end.join
           end
         end.flatten(1)
-
-        p input_lines
-        p bigger_grid
 
         super(bigger_grid)
       end
