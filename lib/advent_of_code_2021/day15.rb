@@ -1,40 +1,84 @@
 # frozen_string_literal: true
 
+require 'set'
+
 module AdventOfCode2021
   class Day15
+    class Nodes
+      def initialize(nodes)
+        # lookup by node
+        @distances = {} # missing (nil) = infinity
+        @visited = Set.new
+
+        # unvisited ordered by distance
+        # by row
+        @nearest = nodes
+      end
+
+      def add_distance(node, distance)
+        current_distance = @distances[node]
+        return if current_distance && current_distance < distance
+
+        @distances[node] = distance
+
+        unless @visited.include?(node)
+          # always true?
+          # Potential speedup: the node only ever moves leftwards,
+          # and it's only this one node that moves
+          @nearest[node.first].sort_by! { |n| @distances[n] || 100000000 }
+        end
+      end
+
+      def visited?(node)
+        @visited.include?(node)
+      end
+
+      def mark_visited(node)
+        @visited << node
+        @nearest[node.first].delete(node)
+      end
+
+      def nearest_unvisited
+        # Potential speedup: we could maintain a sorted list of "nearest"
+        @nearest.map(&:first).compact.min_by { |n| @distances[n] || 100000000 }
+      end
+
+      def distance_to(node)
+        @distances[node]
+      end
+    end
+
     class Part1 < Base
-      attr_reader :lines, :max_x, :max_y, :unvisited
+      attr_reader :lines, :max_x, :max_y, :nodes
 
       def calculate(input_lines)
         @lines = input_lines.map(&:chomp).to_a
         @max_x = lines.first.length - 1
         @max_y = lines.length - 1
 
-        require 'set'
-        @unvisited = Set.new(
-          (0..max_y).map do |y|
-            (0..max_x).map do |x|
+        @nodes = Nodes.new(
+          (0..max_x).map do |x|
+            (0..max_y).map do |y|
               [x, y]
             end
-          end.flatten(1)
+          end
         )
 
-        tentative_distance = {} # nil = Infinity
-        tentative_distance[ [0, 0] ] = 0
+        @nodes.add_distance([0, 0], 0)
 
         iterations = 0
         current = [0, 0]
         puts((max_x + 1) * (max_y + 1))
 
+        t0 = Time.now
+        sort_time = 0
+
         while true
           unvisited_neighbours = unvisited_neighbours_of(*current)
 
           unvisited_neighbours.each do |neighbour|
-            distance = tentative_distance[current] + lines[neighbour.last][neighbour.first].to_i
-
-            if !tentative_distance[neighbour] || distance < tentative_distance[neighbour]
-              tentative_distance[neighbour] = distance
-            end
+            distance = nodes.distance_to(current) + lines[neighbour.last][neighbour.first].to_i
+            nodes.add_distance(neighbour, distance)
           end
 
           iterations += 1
@@ -42,16 +86,18 @@ module AdventOfCode2021
             puts iterations
           end
 
-          unvisited.delete(current)
+          nodes.mark_visited(current)
           break if current == [max_x, max_y]
 
-          current = unvisited \
-            .select { |pos| tentative_distance.include?(pos) } \
-            .sort_by { |pos| tentative_distance[pos] } \
-            .first
+          ts0 = Time.now
+          current = nodes.nearest_unvisited
+          sort_time += (Time.now - ts0)
         end
 
-        tentative_distance[[max_x, max_y]]
+        total_time = Time.now - t0
+        p [sort_time, total_time, sort_time / total_time * 100]
+
+        nodes.distance_to([max_x, max_y])
       end
 
       def neighbours_of(x, y)
@@ -64,7 +110,7 @@ module AdventOfCode2021
       end
 
       def unvisited_neighbours_of(x, y)
-        neighbours_of(x, y).select { |pos| unvisited.include?(pos) }
+        neighbours_of(x, y).reject { |pos| nodes.visited?(pos) }
       end
     end
 
