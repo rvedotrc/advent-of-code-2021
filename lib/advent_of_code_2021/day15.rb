@@ -70,9 +70,27 @@ module AdventOfCode2021
 
     class Part2 < Part1
       def calculate(input_lines)
+        input_lines = input_lines.map(&:chomp)
 
+        bigger_grid = (0..4).map do |tile_y|
+          input_lines.map do |line|
+            (0..4).map do |tile_x|
+              rotate(line, tile_x + tile_y)
+            end.join
+          end
+        end.flatten(1)
 
-        super(input_lines)
+        p input_lines
+        p bigger_grid
+
+        super(bigger_grid)
+      end
+
+      def rotate(line, n)
+        n = n % 9
+        old_seq = '123456789'
+        new_seq = (old_seq + old_seq)[n .. n+8]
+        line.tr(old_seq, new_seq)
       end
     end
   end
