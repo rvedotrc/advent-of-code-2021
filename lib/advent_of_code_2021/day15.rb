@@ -5,14 +5,13 @@ require 'set'
 module AdventOfCode2021
   class Day15
     class Nodes
-      def initialize(nodes)
+      def initialize(_nodes)
         # lookup by node
         @distances = {} # missing (nil) = infinity
         @visited = Set.new
 
-        # unvisited ordered by distance
-        # by row
-        @nearest = nodes
+        # unvisited (with a distance)
+        @unvisited_with_distance = Set.new
       end
 
       def add_distance(node, distance)
@@ -22,10 +21,9 @@ module AdventOfCode2021
         @distances[node] = distance
 
         unless @visited.include?(node)
-          # always true?
-          # Potential speedup: the node only ever moves leftwards,
-          # and it's only this one node that moves
-          @nearest[node.first].sort_by! { |n| @distances[n] || 100000000 }
+          @unvisited_with_distance.add(node)
+        else
+          raise # never?
         end
       end
 
@@ -35,12 +33,11 @@ module AdventOfCode2021
 
       def mark_visited(node)
         @visited << node
-        @nearest[node.first].delete(node)
+        @unvisited_with_distance.delete(node)
       end
 
       def nearest_unvisited
-        # Potential speedup: we could maintain a sorted list of "nearest"
-        @nearest.map(&:first).compact.min_by { |n| @distances[n] || 100000000 }
+        @unvisited_with_distance.min_by { |n| @distances[n] || raise }
       end
 
       def distance_to(node)
