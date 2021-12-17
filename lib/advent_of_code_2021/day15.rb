@@ -5,7 +5,7 @@ require 'set'
 module AdventOfCode2021
   class Day15
     class Nodes
-      def initialize(_nodes)
+      def initialize
         # lookup by node
         @distances = {} # missing (nil) = infinity
         @visited = Set.new
@@ -101,16 +101,8 @@ module AdventOfCode2021
         @max_x = lines.first.length - 1
         @max_y = lines.length - 1
 
-        @nodes = Nodes.new(
-          (0..max_x).map do |x|
-            (0..max_y).map do |y|
-              [x, y]
-            end
-          end
-        )
-
+        @nodes = Nodes.new
         @nodes.add_distance([0, 0], 0)
-
         current = [0, 0]
 
         while true
