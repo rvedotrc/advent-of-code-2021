@@ -1,6 +1,17 @@
 import * as Base from "./base";
 
-type Position = { x: number; y: number };
+class Position {
+  public readonly x: number;
+  public readonly y: number;
+  public readonly key: string;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+    this.key = `${x}:${y}`;
+  }
+}
+
 type PositionWithDistance = { position: Position; distance: number };
 
 class Nodes {
@@ -12,15 +23,13 @@ class Nodes {
   private readonly visited = new Set<string>();
 
   public setDistance(position: Position, distance: number) {
-    const key = Nodes.distancesKey(position);
-
     // console.log(`setDistance ${JSON.stringify(position)} to ${distance}`);
     if (distance === undefined || distance === null || isNaN(distance))
       throw `Unexpected undef/null ${distance}`;
 
-    if (this.visited.has(key)) throw "Can't set for visited";
+    if (this.visited.has(position.key)) throw "Can't set for visited";
 
-    const oldDistance = this.distances.get(key);
+    const oldDistance = this.distances.get(position.key);
     // console.log(`setDistance oldDistance=${oldDistance}`);
     if (oldDistance !== undefined && distance >= oldDistance) return;
 
@@ -32,36 +41,31 @@ class Nodes {
       this.unvisitedByDistance.splice(oldPos, 1);
     }
 
-    this.distances.set(Nodes.distancesKey(position), distance);
+    this.distances.set(position.key, distance);
 
     const newPos = this.find({ position, distance });
     if (isNaN(distance)) throw `Unexpected NaN ${distance}`;
     this.unvisitedByDistance.splice(newPos, 0, { position, distance });
   }
 
-  private static distancesKey(position: Position): string {
-    return `${position.x}:${position.y}`;
-  }
-
   public getDistance(position: Position): number {
-    const key = Nodes.distancesKey(position);
-    if (!this.visited.has(key)) throw "Can't getDistance for unvisited";
+    if (!this.visited.has(position.key))
+      throw "Can't getDistance for unvisited";
 
-    const distance = this.distances.get(key);
+    const distance = this.distances.get(position.key);
     if (distance === undefined) throw "Can't getDistance for distance-less";
 
     return distance;
   }
 
   public markAsVisited(position: Position): void {
-    const key = Nodes.distancesKey(position);
     // console.log(`markAsVisited ${JSON.stringify(position)}`);
-    if (this.visited.has(key)) throw "Already visited";
+    if (this.visited.has(position.key)) throw "Already visited";
 
-    const distance = this.distances.get(key);
+    const distance = this.distances.get(position.key);
     if (distance === undefined) throw "Can't mark distance-less as visited";
 
-    this.visited.add(key);
+    this.visited.add(position.key);
 
     const index = this.find({ position, distance });
     if (index >= this.unvisitedByDistance.length) {
@@ -89,8 +93,7 @@ class Nodes {
   }
 
   public isVisited(position: Position): boolean {
-    const key = Nodes.distancesKey(position);
-    return this.visited.has(key);
+    return this.visited.has(position.key);
   }
 
   private find(target: PositionWithDistance): number {
@@ -142,7 +145,7 @@ export class Part1 implements Base.Part {
 
     const nodes = new Nodes();
 
-    let current = { x: 0, y: 0 };
+    let current = new Position(0, 0);
     let currentDistance = 0;
     nodes.setDistance(current, currentDistance);
     // nodes.markAsVisited(current);
@@ -183,7 +186,7 @@ export class Part1 implements Base.Part {
       currentDistance = nextCurrent.distance;
     }
 
-    return nodes.getDistance({ x: maxX, y: maxY }).toString();
+    return nodes.getDistance(new Position(maxX, maxY)).toString();
   }
 
   protected parseInput(lines: string[]): number[][] {
@@ -194,10 +197,10 @@ export class Part1 implements Base.Part {
   neighboursOf(position: Position, maxX: number, maxY: number): Position[] {
     const r: Position[] = [];
 
-    if (position.x > 0) r.push({ x: position.x - 1, y: position.y });
-    if (position.x < maxX) r.push({ x: position.x + 1, y: position.y });
-    if (position.y > 0) r.push({ x: position.x, y: position.y - 1 });
-    if (position.y < maxY) r.push({ x: position.x, y: position.y + 1 });
+    if (position.x > 0) r.push(new Position(position.x - 1, position.y));
+    if (position.x < maxX) r.push(new Position(position.x + 1, position.y));
+    if (position.y > 0) r.push(new Position(position.x, position.y - 1));
+    if (position.y < maxY) r.push(new Position(position.x, position.y + 1));
 
     return r;
   }
