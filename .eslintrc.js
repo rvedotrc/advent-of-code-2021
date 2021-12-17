@@ -11,6 +11,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   rules: {
+    "no-constant-condition": 0,
     "no-shadow": 1,
     "@typescript-eslint/ban-ts-ignore": 0,
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],

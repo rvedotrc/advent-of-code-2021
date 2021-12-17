@@ -135,8 +135,7 @@ class Nodes {
 
 export class Part1 implements Base.Part {
   calculate(lines: string[]): string {
-    // const chars = lines.map(line => line.split(""));
-    const grid = lines.map(line => line.split("").map(s => parseInt(s)));
+    const grid = this.parseInput(lines);
     const maxX = grid[0].length - 1;
     const maxY = grid.length - 1;
     // console.log({ maxX, maxY });
@@ -148,7 +147,7 @@ export class Part1 implements Base.Part {
     nodes.setDistance(current, currentDistance);
     // nodes.markAsVisited(current);
 
-    while (!nodes.isVisited({ x: maxX, y: maxY })) {
+    while (true) {
       for (const neighbour of this.unvisitedNeighboursOf(
         current,
         nodes,
@@ -156,6 +155,7 @@ export class Part1 implements Base.Part {
         maxY
       )) {
         // console.log({
+        //   current,
         //   currentDistance,
         //   g: grid[neighbour.y][neighbour.x],
         //   neighbour,
@@ -176,6 +176,7 @@ export class Part1 implements Base.Part {
       }
 
       nodes.markAsVisited(current);
+      if (current.x === maxX && current.y === maxY) break;
 
       const nextCurrent = nodes.nearestUnvisited();
       current = nextCurrent.position;
@@ -183,6 +184,11 @@ export class Part1 implements Base.Part {
     }
 
     return nodes.getDistance({ x: maxX, y: maxY }).toString();
+  }
+
+  protected parseInput(lines: string[]): number[][] {
+    // const chars = lines.map(line => line.split(""));
+    return lines.map(line => line.split("").map(s => parseInt(s)));
   }
 
   neighboursOf(position: Position, maxX: number, maxY: number): Position[] {
@@ -208,13 +214,20 @@ export class Part1 implements Base.Part {
   }
 }
 
-export class Part2 implements Base.Part {
-  calculate(lines: string[]): string {
-    console.log({ lines });
-    return "";
+export class Part2 extends Part1 {
+  protected parseInput(lines: string[]): number[][] {
+    const smallGrid = super.parseInput(lines);
+
+    return [...Array(5).keys()].flatMap(tileY => {
+      return smallGrid.map(row => {
+        return [...Array(5).keys()].flatMap(tileX => {
+          return this.rotate(row, tileX + tileY);
+        });
+      });
+    });
+  }
+
+  private rotate(row: number[], by: number) {
+    return row.map(n => ((n - 1 + by) % 9) + 1);
   }
 }
-
-// export const day: Base.Day = { Part1, Part2 };
-
-// export default day;
