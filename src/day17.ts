@@ -9,13 +9,6 @@ type ResultPair = {
 export class Part1 implements Base.Part {
   calculate(lines: string[]): string {
     const target = this.parseTarget(lines[0]);
-    console.log(target);
-
-    // this.tryTrajectory(target, 7, 2);
-    // this.tryTrajectory(target, 6, 3);
-    // this.tryTrajectory(target, 9, 0);
-    // this.tryTrajectory(target, 17, -4);
-    // this.tryTrajectory(target, 6, 9);
 
     let best: ResultPair | undefined;
 
@@ -40,7 +33,6 @@ export class Part1 implements Base.Part {
     for (let vX = 0; vX <= target.x1; ++vX) {
       for (let vY = target.y0; vY <= -target.y0; ++vY) {
         const result = this.runTrajectory(target, vX, vY);
-        // console.log({ result });
         if (result.hitTarget)
           output.push({ input: { vX, vY }, output: result });
       }
@@ -62,11 +54,6 @@ export class Part1 implements Base.Part {
     return { x0, x1, y0, y1 };
   }
 
-  // private tryTrajectory(target: TargetArea, vX: number, vY: number): void {
-  //   const result = this.runTrajectory(target, vX, vY);
-  //   console.log({ result });
-  // }
-
   private runTrajectory(
     target: TargetArea,
     vX: number,
@@ -78,8 +65,6 @@ export class Part1 implements Base.Part {
     let hitTarget = false;
 
     while (true) {
-      // console.log({ x, y, vX, vY });
-
       if (
         x >= target.x0 &&
         x <= target.x1 &&
