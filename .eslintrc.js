@@ -18,6 +18,15 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": ["error"],
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "object-shorthand": "error"
+    "object-shorthand": "error",
+    "no-unused-vars": "off",
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
   }
 };

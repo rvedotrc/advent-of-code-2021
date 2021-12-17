@@ -93,6 +93,10 @@ export class Part1 implements Base.Part {
 
     return { hitTarget, maxY };
   }
+
+  test(): boolean {
+    return true;
+  }
 }
 
 export class Part2 extends Part1 {

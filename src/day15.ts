@@ -212,6 +212,10 @@ export class Part1 implements Base.Part {
       pos => !nodes.isVisited(pos)
     );
   }
+
+  test(): boolean {
+    return true;
+  }
 }
 
 export class Part2 extends Part1 {
