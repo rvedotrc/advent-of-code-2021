@@ -1,2 +1,6 @@
-vendor/bundle/
+dist/
 input/
+node_modules/
+tsconfig.tsbuildinfo
+vendor/bundle/
+yarn.lock
