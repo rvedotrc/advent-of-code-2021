@@ -1,5 +1,5 @@
 dist/
-input/
+input/day*
 node_modules/
 tsconfig.tsbuildinfo
 vendor/bundle/
