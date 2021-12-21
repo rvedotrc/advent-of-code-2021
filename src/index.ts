@@ -1,12 +1,14 @@
 import * as base from "./base";
 import * as day15 from "./day15";
 import * as day17 from "./day17";
+import * as day18 from "./day18";
 import * as day99 from "./day99";
 import * as fs from "fs";
 
 const partBuilders: Record<string, base.Day> = {
   day15,
   day17,
+  day18,
   day99,
 };
 
@@ -17,13 +19,25 @@ const runTest = (
   inputBase: string
 ): boolean => {
   const inputFile = inputBase;
-  const inputText = fs
-    .readFileSync(inputFile)
-    .toString("utf-8")
-    .trim()
-    .split("\n");
+
+  let inputText: string[];
+  try {
+    inputText = fs.readFileSync(inputFile).toString("utf-8").trim().split("\n");
+  } catch (e) {
+    if (e.code === "ENOENT") return true;
+    throw e;
+  }
+
   const outputFile = `${inputBase}.answer.part${partNum.toLowerCase()}`;
-  const outputText = fs.readFileSync(outputFile).toString("utf-8").trim();
+
+  let outputText = "";
+  try {
+    outputText = fs.readFileSync(outputFile).toString("utf-8").trim();
+  } catch (e) {
+    if (e.code === "ENOENT") return true;
+    throw e;
+  }
+
   const actual = new part().calculate(inputText);
   if (actual !== outputText) {
     console.error("  example failed", { expected: outputText, actual });
