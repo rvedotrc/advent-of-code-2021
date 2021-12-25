@@ -29,6 +29,8 @@ const constantEquals = (
   const walk = (x: AlgebraicValue) => {
     if (Array.isArray(x) && x[0] === "I") {
       inputsUsed.add(x[1]);
+    } else if (Array.isArray(x) && x[0] === "S") {
+      //
     } else if (Array.isArray(x)) {
       walk(x[0]);
       walk(x[2]);
@@ -51,6 +53,10 @@ const constantEquals = (
     i: Map<number, number>
   ): number | "error" => {
     if (typeof x === "number") return x;
+
+    if (x[0] === "S") {
+      return "error";
+    }
 
     if (x[0] === "I") {
       const v = i.get(x[1]);
@@ -184,6 +190,7 @@ const algebraicOperations = {
 type AlgebraicValue =
   | number
   | ["I", number]
+  | ["S", keyof Registers]
   | [AlgebraicValue, "+" | "*" | "/" | "%" | "=", AlgebraicValue];
 
 type Condition =
@@ -220,6 +227,7 @@ type State = {
 
 const isConditionValue = (i: BranchingAlgebraicValue): i is ConditionValue => {
   if (typeof i === "number") return false;
+  if (typeof i === "string") return false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return "ifEquals" in (i as any);
 };
@@ -241,6 +249,13 @@ export class Part1 implements Base.Part {
       z: 0,
     };
 
+    const trackingRegisters: AlgebraicRegisters = {
+      w: ["S", "w"],
+      x: ["S", "x"],
+      y: ["S", "y"],
+      z: ["S", "z"],
+    };
+
     const queue: State[] = [
       { registers: initialRegisters, inputs, ip: 0, conditions: [] },
     ];
@@ -252,6 +267,10 @@ export class Part1 implements Base.Part {
       if (!state) break;
 
       const instruction = program[state.ip];
+      if (instruction && state && instruction.startsWith("inp ")) {
+        console.log("pre-input registers " + JSON.stringify(state.registers));
+        state.registers = trackingRegisters; // ugly
+      }
       console.log(JSON.stringify({ instruction, state }));
 
       if (!instruction) {
@@ -326,7 +345,7 @@ export class Part1 implements Base.Part {
       const target = m[1] as keyof typeof registers;
       const v = inputs.shift();
       if (v === undefined) throw "No more input";
-      return { ...registers, [target]: v, z: 0 }; // Hypothesis: z is 0 at each input
+      return { ...registers, [target]: v };
     }
 
     m = instruction.match(/^(add|mul|div|mod|eql) ([wxyz]) ([wxyz]|-?\d+)$/);
