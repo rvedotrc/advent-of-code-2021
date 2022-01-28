@@ -6,7 +6,7 @@ type ResultPair = {
   output: { hitTarget: boolean; maxY: number };
 };
 
-export class Part1 implements Base.Part {
+export class Part1 extends Base.BasePart implements Base.Part {
   calculate(lines: string[]): string {
     const target = this.parseTarget(lines[0]);
 

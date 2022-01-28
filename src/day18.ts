@@ -136,7 +136,7 @@ class SnailfishNumber {
   }
 }
 
-export class Part1 implements Base.Part {
+export class Part1 extends Base.BasePart implements Base.Part {
   calculate(lines: string[]): string {
     return SnailfishNumber.add(lines).magnitude().toString();
   }
@@ -192,22 +192,6 @@ export class Part1 implements Base.Part {
     const n = new SnailfishNumber(input);
     const actual = n.magnitude().toString();
     return this.checkResult(testName, actual, expected.toString());
-  }
-
-  protected checkResult(
-    testName: string,
-    actual: string,
-    expected: string
-  ): boolean {
-    if (actual === expected) {
-      console.log(`  pass ${testName} (${expected})`);
-      return true;
-    } else {
-      console.log(
-        `  FAIL ${testName} (got ${actual} but expected ${expected})`
-      );
-      return false;
-    }
   }
 
   test(): boolean {

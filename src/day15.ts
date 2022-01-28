@@ -136,7 +136,7 @@ class Nodes {
   }
 }
 
-export class Part1 implements Base.Part {
+export class Part1 extends Base.BasePart implements Base.Part {
   calculate(lines: string[]): string {
     const grid = this.parseInput(lines);
     const maxX = grid[0].length - 1;

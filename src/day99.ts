@@ -1,6 +1,6 @@
 import * as Base from "./base";
 
-export class Part1 implements Base.Part {
+export class Part1 extends Base.BasePart implements Base.Part {
   calculate(_lines: string[]): string {
     return "";
   }

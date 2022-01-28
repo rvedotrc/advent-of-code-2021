@@ -1,6 +1,6 @@
 import * as Base from "./base";
 
-export class Part1 implements Base.Part {
+export class Part1 extends Base.BasePart implements Base.Part {
   calculate(lines: string[]): string {
     const { map, grid: startGrid } = this.parse(lines);
     let grid = startGrid;
