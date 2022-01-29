@@ -22,9 +22,10 @@ class Range {
   }
 
   public combine(b: Range): ABRange[] {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const a: Range = this;
+    return Range.combine(this, b);
+  }
 
+  public static combine(a: Range, b: Range): ABRange[] {
     // No overlap
     if (a.end <= b.start || b.end <= a.start) {
       return [
@@ -98,25 +99,22 @@ class Region {
   }
 
   public combine(b: Region): ABRegion[] {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let a: Region = this;
-    if (b.ranges.length !== a.ranges.length) throw "Dimensions mismatch";
+    return Region.combine(this, b);
+  }
 
-    // const origA = a;
-    // const origB = b;
+  private withRange(dimension: number, range: Range): Region {
+    const newRanges = [...this.ranges];
+    newRanges[dimension] = range;
+    return new Region(newRanges);
+  }
+
+  public static combine(a: Region, b: Region): ABRegion[] {
+    if (b.ranges.length !== a.ranges.length) throw "Dimensions mismatch";
 
     const output: ABRegion[] = [];
 
     for (let i = 0; i < a.ranges.length; ++i) {
       const axisSplit = a.ranges[i].combine(b.ranges[i]);
-      // console.debug("axisSplit", {
-      //   a: a.toString(),
-      //   b: b.toString(),
-      //   i,
-      //   ar: a.ranges[i].toString(),
-      //   br: b.ranges[i].toString(),
-      //   output: axisSplit.map(t => `${t.tag}:${t.range.toString()}`).join(", "),
-      // });
       let seenAB = false;
 
       for (const split of axisSplit) {
@@ -133,29 +131,13 @@ class Region {
       }
 
       if (!seenAB) {
-        // console.log({
-        //   a: origA.toString(),
-        //   b: origB.toString(),
-        //   output: output.map(r => `${r.tag}:${r.region.toString()}`).join(", "),
-        // });
         return output;
       }
     }
 
     output.push({ tag: "ab", region: a }); // a === b
 
-    // console.log({
-    //   a: origA.toString(),
-    //   b: origB.toString(),
-    //   output: output.map(r => `${r.tag}:${r.region.toString()}`).join(", "),
-    // });
     return output;
-  }
-
-  private withRange(dimension: number, range: Range): Region {
-    const newRanges = [...this.ranges];
-    newRanges[dimension] = range;
-    return new Region(newRanges);
   }
 }
 
@@ -225,14 +207,6 @@ export class Part1 extends Base.BasePart implements Base.Part {
         // console.debug(JSON.stringify(n));
         return parseInt(n);
       }) as [number, number];
-
-      // console.log({ start, end });
-
-      // Clamp to grid size
-      // if (start < -50) start = -50;
-      // if (end < -50) end = -50;
-      // if (start > +50) start = +50;
-      // if (end > +50) end = +50;
 
       return new Range(start, end + 1);
     };
